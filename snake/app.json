@@ -1,8 +1,8 @@
 {
   "expo": {
-    "name": "Pong",
+    "name": "SNAKE",
     "description": "Just a game I'm putting together for fun!",
-    "slug": "pong",
+    "slug": "snake",
     "privacy": "public",
     "sdkVersion": "27.0.0",
     "platforms": ["ios", "android"],
