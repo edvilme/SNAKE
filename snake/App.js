@@ -1,20 +1,24 @@
+/*Eduardo Villalpando Mello, May 26th, 2018*/
+
 var AppVersionNumber = 'v. 0.9.2';
 
 import React from 'react';
 import { StyleSheet, Text, View, Dimensions, SafeAreaView, TouchableOpacity } from 'react-native';
 import { Gyroscope, DeviceMotion, DangerZone } from 'expo';
 
+
+//Global variables and settings for the game (to be expanded in future updates)
 var Game_this;
 var lastPositionX;
 var lastPositionY;
 
 
-
+//ElementsDot for rendering food, traps, portals and the snake itself
 export class ElementsDot extends React.Component {
-  componentWillMount(){
-  }
   render(){
+    //onTouch functionality (except for active)
     if(this.props.dotType != 'active' && this.props.dotType != 'tail' && this.props.positionX == lastPositionX && this.props.positionY == lastPositionY){
+      //conditionals ----
       GameBoard.snakeLength = GameBoard.snakeLength +1;
       GameBoard.generateItems();
     }
@@ -29,19 +33,17 @@ export class ElementsDot extends React.Component {
   }
 }
 
+//Game container: GameBoard and GameLoose (GameLevels also, maybe)
 export default class Game extends React.Component{
+  componentWillMount(){
+    Game_this = this;
+  }
   static gameShow = 'GameBoard';
-
   static gameShowChange(gameShowNew){
     Game.gameShow = gameShowNew;
     DangerZone.DeviceMotion.removeAllListeners();
     Game_this.forceUpdate();
   }
-
-  componentWillMount(){
-    Game_this = this;
-  }
-
   render(){
     switch (Game.gameShow) {
       case 'GameBoard':
@@ -51,7 +53,6 @@ export default class Game extends React.Component{
         return <GameLoose></GameLoose>;
         break;
       default:
-
     }
   }
 }
@@ -60,7 +61,8 @@ export class GameLoose extends React.Component {
   render(){
     return(
       <SafeAreaView style={[styles.container, {backgroundColor: 'black'}]}>
-        <Text style={{fontSize: 24, color: 'white', fontWeight: '800', letterSpacing: 2}}>YOU LOOSE</Text>
+        <Text style={{fontSize: 48, color: 'white', fontWeight: '800', letterSpacing: 2}}>YOU LOOSE</Text>
+        <Text style={{fontSize: 48, color: 'white', fontWeight: '800', letterSpacing: 2}}>{GameBoard.snakeLength}</Text>
         <TouchableOpacity style={{height: 48, backgroundColor: 'white', borderRadius: 16, margin: 24, flexDirection: 'row', width: '100%', alignItems: 'center', justifyContent: 'center'}} onPress={()=>{Game.gameShowChange('GameBoard')}}>
           <Text style={{fontSize: 16}}>PLAY AGAIN</Text>
         </TouchableOpacity>
@@ -75,15 +77,19 @@ export class GameBoard extends React.Component {
     dataRotation: {},
     dataAcceleration: {},
   }
-
+  //Get measurements in terms of 24 (blocks measure 24)
   widthGameBoard = 24*Math.floor(Dimensions.get('window').width/24);
   heightGameBoard = 24*Math.floor(Dimensions.get('window').height/24);
 
+  //snake length is the punctuation
   static snakeLength = 5;
+  //Array containing all the positions of the snake
   dotsArray = [{positionX: this.widthGameBoard/2 - 12 , positionY: this.heightGameBoard/2 - 12 }];
 
+  //Array containing items to be rendered on the map
   static itemsArray = []
 
+  //Generate items at random positions on the map
   static generateItems(){
     var widthGameBoard = 24*Math.floor(Dimensions.get('window').width/24);
     var heightGameBoard = 24*Math.floor(Dimensions.get('window').height/24);
@@ -93,7 +99,7 @@ export class GameBoard extends React.Component {
   }
   componentWillMount(){
     GameBoard.generateItems();
-    GameBoard.snakeLength = 5;
+    GameBoard.snakeLength = 2;
     lastPositionX = this.widthGameBoard/2 - 12;
     lastPositionY = this.heightGameBoard/2 - 12;
     this.dotsArray = [{ positionX: this.widthGameBoard/2 - 12 , positionY: this.heightGameBoard/2 - 12 }];
@@ -171,11 +177,7 @@ export class GameBoard extends React.Component {
               dotType={l.dotType}
               ></ElementsDot>
             )
-          })
-
-          }
-
-
+          })}
         </View>
       </SafeAreaView>
     );
